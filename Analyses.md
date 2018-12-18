@@ -53,6 +53,24 @@ Même si il aurait été faisable de travailler sur les fichiers images uniqueme
 Mon problème est un problème de classification de textes. Dans mon cas, chaque document est relié à une situation : Celle d'un procès de l'industrie du tabac. De plus, chaque texte doit correspondre à une catégorie. Ainsi, je crains qu'un classifieur bayesien, dont une des hypothèses est l'indépendance des mots entre eux, ne soit pas performant. Comme ce fut une solution très utilisé, je tiens à quand même la tester, comme élément de comparaison. J'aimerais ensuite essayer une Multi Layer Perceptron Classifier.  Le but va être de déterminer par gridsearch ses paramètres optimaux. 
 
 
+## Performance de la solution proposée / Comparaison avec le classifieur bayesien. 
+
+J'ai tout d'abord opter pour un représentation **BagOfWords** avec la fonction **CountVectorizer** plutôt qu'une représentation *TF IDF*. La représentation TFIDF introduit le poids de certains mots, ce qui aurait pu etre intéréssant dans mon modele, car comme je le disais plus haut, il existe plusieurs mots récurrents dans certaines catégories : From,To, ... Cependant, en comparant les deux représentations, je me suis aperçu que les résultats étaient moins bon avec le TF IDF, j'ai donc tourné mon code avec COunt Vectorizer. 
+
+J'ai entrainé deux modèles différents : Un classifieur Bayesien et un MLP Classifier. Le classifieur devait me servir de modele de référence et de comparaison. J'ai déterminé rapidement le NB optimal avec un grid search. J'ai fait varié le uniquement le smoothing ($ \alpha $) et le max_df et max_features pour le vectorizer.  
+
+J'ai ensuite choisie un MLP layer perceptron, avec un solver Adam. Même si j'ai lu que parfois (https://arxiv.org/abs/1705.08292), le solver SGD avait une généralisation meilleure, j'ai gardé le paramètre Adam car il était retenu par le GridSearch. Le nombre de couche a été limité à 50 car les performances avec plus de layers étaient similaires, et le temps de calcul était ensuite drastiquement augmenté au fur et a mesure que le nombre de couches augmentaient. Ainsi 50 neurones était un choix adapté.
+
+|                      |  NB    | MLP    |
+|----------------------|--------|--------|
+| Training             |  0.876 | 0.995  |
+| Validation           |  0.745 | 0.776  |
+| Test                 | 0.709  | 0.766  |
+| Cross Validation (5) | 0.684  | 0.699  |
+
+Sur les résultats d'accuracy, on voit que notre modèle MLP est meilleur de le Naives Bayes. En effet, on gagne plusieurs \% de précision par rapport en passant du NB au MLP. Cette affirmation est validée par la validation croisée, qui donne un leger avantage au modèle MLP. (J'ai pris la moyenne des 5 cross validation). Cependant, on voit que le modèle MLP à une tendance plus forte à surapprendre les données de train. En effet, on a 99,5\% de précision sur le set de train, contre 87,6\%. Ainsi, les garanties de performance sont plus incertaines.
+
+
 
 
  
