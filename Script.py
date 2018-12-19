@@ -59,10 +59,6 @@ def model_test(model,vectorizer,X_test,y_test):
     print(confusion_matrix(y_test,y_pred_test))
     return model
 
-model = model_NB_train(X_train,y_train, vectorizer)
-model_test(model,vectorizer,X_test,y_test)
-
-
 
 
 
@@ -78,10 +74,19 @@ def MLP_train(layer_size,activation, vectorizer, X_train, y_train):
     
     return model
 
-model = MLP_train(5,'tanh',vectorizer,X_train,y_train)
-model_test(model,vectorizer,X_test,y_test)
-#%%
 
+def read_data():
+    X, y = [], []
+    for directory in os.listdir('./data'):
+        path = './data/'+directory
+        for f in os.listdir(path):
+            file = open(path+'/'+f,'r')
+            X.append(file.read())
+            y.append(directory)
+            file.close()
+    return X,y
+#%%
+"""
 # On fait le grid search pour trouver la meilleure configuration
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(message)s')
@@ -115,7 +120,7 @@ print("Best score: %0.3f" % grid_search.best_score_)
 print("Best parameters set:")
 best_parameters = grid_search.best_estimator_.get_params()
 for param_name in sorted(parameters.keys()):
-    print("\t%s: %r" % (param_name, best_parameters[param_name]))
+    print("\t%s: %r" % (param_name, best_parameters[param_name]))"""
 #%%
 
 if __name__ == '__main__':
@@ -126,7 +131,7 @@ if __name__ == '__main__':
     data.head(10)
     
     #On affiche un diagramme d'apparation de chaque catégorie dans notre set de données
-    g = sns.countplot(data['label'],orient='h')
+    #g = sns.countplot(data['label'],orient='h')
     
     #Comme la fréquence d'apparition me parait, inégale, je choisie d'afficher un camembert pour mieux 
     # se rendre compte des disparité
@@ -135,32 +140,16 @@ if __name__ == '__main__':
     plt.show()
     
     
-    list_files = []
-    for root, dirs, files in os.walk("./data", topdown=False):
-        for name in files:
-            if ".txt" in os.path.join(root, name) :
-                list_files.append(os.path.join(root, name))
-    
-    list_text = []
-    for file in list_files:
-        file_object = open(file,'r')
-        list_text.append(file_object.read())
-        
-    dict_data = {}
-    for i in range(len(data['img_path'])):
-        dict_data['../nlp-labs/tobacco-lab/data/'+data['img_path'][i].replace('jpg','txt')] = data['label'][i] 
-    X = []
-    y = []
-    for i in dict_data:
-        file_object = open(i,"r")
-        X.append(file_object.read())
-        file_object.close()
-        y.append(dict_data[i])
-        
+    X,y = read_data()
     # On split nos données
     X_train, X_test,y_train,  y_test = train_test_split(X,y, test_size=0.2)
     X_train, X_dev, y_train, y_dev = train_test_split(X_train, y_train, test_size = 0.25)
         
     vect = vectorizer(X_train,5000,0.75)
+    
+    
     model = MLP_train(50,'relu',vect,X_train,y_train)
-    model_test(model,vectorizer,X_test,y_test)
+    model_test(model,vect,X_test,y_test)
+
+#    model = model_NB_train(X_train,y_train,vect)
+#    model_test(model,vect,X_test,y_test)
