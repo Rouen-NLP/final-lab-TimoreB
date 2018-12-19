@@ -61,6 +61,8 @@ J'ai entrainé deux modèles différents : Un classifieur Bayesien et un MLP Cla
 
 J'ai ensuite choisie un MLP layer perceptron, avec un solver Adam. Même si j'ai lu que parfois (https://arxiv.org/abs/1705.08292), le solver SGD avait une généralisation meilleure, j'ai gardé le paramètre Adam car il était retenu par le GridSearch. Le nombre de couche a été limité à 50 car les performances avec plus de layers étaient similaires, et le temps de calcul était ensuite drastiquement augmenté au fur et a mesure que le nombre de couches augmentaient. Ainsi 50 neurones était un choix adapté.
 
+### Analyses de la performance
+
 |                      |  NB    | MLP    |
 |----------------------|--------|--------|
 | Training             |  0.876 | 0.995  |
@@ -69,6 +71,16 @@ J'ai ensuite choisie un MLP layer perceptron, avec un solver Adam. Même si j'ai
 | Cross Validation (5) | 0.684  | 0.699  |
 
 Sur les résultats d'accuracy, on voit que notre modèle MLP est meilleur de le Naives Bayes. En effet, on gagne plusieurs \% de précision par rapport en passant du NB au MLP. Cette affirmation est validée par la validation croisée, qui donne un leger avantage au modèle MLP. (J'ai pris la moyenne des 5 cross validation). Cependant, on voit que le modèle MLP à une tendance plus forte à surapprendre les données de train. En effet, on a 99,5\% de précision sur le set de train, contre 87,6\%. Ainsi, les garanties de performance sont plus incertaines.
+
+### Analyse des prédictions
+
+On a ensuite procédé un accuracy et classification report. On peut ainsi voir quelles sont les classes mieux appréhender par les différentes méthodes. On s'aperçoit que les deux modèles n'ont aucune difficulté à détecter un CV, et ne se trompe que très rarement en classifiant un document en tant que CV. Cependant, on observe également le même type de confusion entre deux catégories : Lettre et Mémo. L'erreur la plus fréquente est une inversion entre mémo et lettre  par le classifieur. La catégorie lettre est celle qui entraine le plus de confusion, puisqu'elle est régulièrement appelé à tord.
+
+## Pistes d'améliorations
+
+Parmi les premieres idées que l'on aurait pu avoir, on retrouve  le fait d'utiliser une combinaison de classfieurs. 
+
+
 
 
 
