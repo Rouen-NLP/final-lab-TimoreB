@@ -48,6 +48,8 @@ On peut faire une analyse comme suite des fichiers textes, par catégorie :
 
 Même si il aurait été faisable de travailler sur les fichiers images uniquement, nous sommes en cours de Text Analysis, et une analyse de  fichier texte sera préférable. Bien que cet argument ne soit pas scientifique, il fut pris en compte pour la décision de traiter le texte. On voit que chaque catégorie a des caractéristiques propres. Mais si un même texte peut ressemble à un texte d'une autre catégorie, la différence entre deux textes de deux catégories existent. Je trouve que les distinctions entre deux images est moins simples. En effet, je trouve que l'entropie interne entre les images d'une même catégorie assez forte par moment. Phénomene que je retrouve moins avec les textes.
 
+J'ai également choisi de ne pas faire de pré processing sur mes données textes. En effet, les sauts de lignes constituent pour moi une caractéristique du document (la "structure"), et je pense qu'il peut etre reconnu par le classifieur. De plus, les mots ou lettres n'ayant pas de sens, n'apparaissent que dans certaines catégories donc je pense qu'ils peuvent aider notre classifieur et sont importants.
+
 ## Analyse du problème et choix de la solution
 
 Mon problème est un problème de classification de textes. Dans mon cas, chaque document est relié à une situation : Celle d'un procès de l'industrie du tabac. De plus, chaque texte doit correspondre à une catégorie. Ainsi, je crains qu'un classifieur bayesien, dont une des hypothèses est l'indépendance des mots entre eux, ne soit pas performant. Comme ce fut une solution très utilisé, je tiens à quand même la tester, comme élément de comparaison. J'aimerais ensuite essayer une Multi Layer Perceptron Classifier.  Le but va être de déterminer par gridsearch ses paramètres optimaux. 
@@ -63,7 +65,7 @@ J'ai ensuite choisie un MLP layer perceptron, avec un solver Adam. Même si j'ai
 
 ### Analyses de la performance
 
-|                      |  NB    | MLP    |
+|                .      |  NB    | MLP    |
 |----------------------|--------|--------|
 | Training             |  0.876 | 0.995  |
 | Validation           |  0.745 | 0.776  |
@@ -78,7 +80,10 @@ On a ensuite procédé un accuracy et classification report. On peut ainsi voir 
 
 ## Pistes d'améliorations
 
-Parmi les premieres idées que l'on aurait pu avoir, on retrouve  le fait d'utiliser une combinaison de classfieurs. 
+Parmi les premieres idées que l'on aurait pu avoir, on retrouve  le fait d'utiliser une combinaison de classfieurs. IL aurait été intéréssant dans cette combinaison d'avoir un classifieur qui se base sur un CountVectorizer et un sur une représentation TFIDF. En effet, mon MLP et le NB se base sur le CountVectorizer et ils présentent tous les deux les mêmes erreurs. Ainsi, introduire d'autres classifieurs avec un systeme de vote qui s'appuyerait sur les faiblesses et les qualités de chaque classifieurs seraient intéréssant.
+
+De plus, un pré processing des données et des fichiers textes peut également être une piste. En effet, j'ai pris le partie de n'effectuer aucun changement sur mes fichiers textes. Considérant que les erreurs de l'OCR sur une catégorie ne se reproduiraient pas sur une autre catégorie. Il en est de même pour les sauts de lignes, parfois, plusieurs sauts de ligne successifs apparaissaient, pour moi, ils faisaient partie de la structure du document, et devaient être gardé. Cependant, les enlever peut peut-être permettre de créer des sequences nouvelles, plus facilement reconnaissable par notre classifieur.
+
 
 
 
